@@ -1,0 +1,35 @@
+name: Java CI
+
+on:
+  # Validate every change before it is merged.
+  pull_request:
+    branches:
+      - master
+  # Also validate commits pushed directly to the default branch.
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # The project targets Java 21; Maven dependencies are cached automatically.
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      # Run the same verification lifecycle used for local CI validation.
+      - name: Build and run tests
+        run: mvn --batch-mode verify
